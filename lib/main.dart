@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:class_box/constants.dart';
 import 'package:class_box/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'pages/auth/first_auth_page.dart';
 import 'pages/splash_page.dart';
 
 Future<void> main() async {
@@ -24,9 +26,10 @@ class App extends StatelessWidget {
           dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch}),
       title: 'ClassBox',
       theme: ThemeData(
+        unselectedWidgetColor: kBlueTextColor,
         textTheme: GoogleFonts.latoTextTheme(),
       ),
-      home: const SplashPage(),
+      home: const FirstAuthPage(),
     );
   }
 }
