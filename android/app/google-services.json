@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "68631060885",
+    "project_id": "class-box-011",
+    "storage_bucket": "class-box-011.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68631060885:android:d0fdd93f3fcb1a548d569c",
+        "android_client_info": {
+          "package_name": "com.flusett.class_box"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68631060885-s8cil8bohaq5hujhr3bmasp6mnalpj5f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVqlO75mBh3lJQ4oXJrf3mrOo8AvtSek8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68631060885-s8cil8bohaq5hujhr3bmasp6mnalpj5f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
