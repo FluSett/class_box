@@ -27,7 +27,7 @@ class App extends StatelessWidget {
       title: 'ClassBox',
       theme: ThemeData(
         unselectedWidgetColor: kBlueTextColor,
-        textTheme: GoogleFonts.latoTextTheme(),
+        textTheme: GoogleFonts.interTextTheme(),
       ),
       home: const FirstAuthPage(),
     );
