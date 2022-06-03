@@ -92,7 +92,7 @@ class SelectSubjectsPageState extends State<SelectSubjectsPage> {
                       color: Colors.white,
                     ),
                     suffixIcon: IconButton(
-                      onPressed: () => _searchController.clear(),
+                      onPressed: _onClearTap,
                       icon: const Icon(
                         Icons.clear,
                         color: Colors.white,
