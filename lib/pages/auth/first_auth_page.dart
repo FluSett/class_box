@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import '../../widgets_from_lib/drop_down.dart';
+import '../method-pages/select_subjects_page.dart';
 
 class FirstAuthPage extends StatefulWidget {
   const FirstAuthPage({Key? key}) : super(key: key);
@@ -13,10 +14,11 @@ class FirstAuthPage extends StatefulWidget {
 
 class FirstAuthPageState extends State<FirstAuthPage> {
   final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
   final _surnameController = TextEditingController();
+  final _middleNameController = TextEditingController();
   final _schoolController = TextEditingController();
   final _groupController = TextEditingController();
+  final _subjectController = TextEditingController();
 
   int roleIndex = 0;
 
@@ -25,7 +27,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
 
   final List<SelectedListItem> _listOfSchools = [
     SelectedListItem(false, 'Tokyo'),
-    SelectedListItem(false, 'NewYork'),
+    SelectedListItem(false, 'New York'),
     SelectedListItem(false, 'London'),
     SelectedListItem(false, 'Paris'),
     SelectedListItem(false, 'Madrid'),
@@ -33,7 +35,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     SelectedListItem(false, 'Rome'),
     SelectedListItem(false, 'Barcelona'),
     SelectedListItem(false, 'Cologne'),
-    SelectedListItem(false, 'MonteCarlo'),
+    SelectedListItem(false, 'Monte Carlo'),
     SelectedListItem(false, 'Puebla'),
     SelectedListItem(false, 'Florence'),
   ];
@@ -51,6 +53,17 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     SelectedListItem(false, 'A-32'),
     SelectedListItem(false, 'P-41'),
     SelectedListItem(false, 'P-42'),
+  ];
+
+  final List<SelectedListItem> _listOfSubjects = [
+    SelectedListItem(false, 'Хімія'),
+    SelectedListItem(false, 'Фізика'),
+    SelectedListItem(false, 'Математика'),
+    SelectedListItem(false, 'Фізкультура'),
+    SelectedListItem(false, 'Бази даних'),
+    SelectedListItem(false, 'Операційні системи'),
+    SelectedListItem(false, 'ООП'),
+    SelectedListItem(false, 'Мобільна розробка'),
   ];
 
   @override
@@ -76,7 +89,6 @@ class FirstAuthPageState extends State<FirstAuthPage> {
       DropDown(
         submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
         searchHintText: 'Type to search your school...',
-        submitButtonText: 'Вибрати',
         dataList: _listOfSchools,
         selectedItem: (String selected) {
           setState(() {
@@ -94,7 +106,6 @@ class FirstAuthPageState extends State<FirstAuthPage> {
       DropDown(
         submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
         searchHintText: 'Type to search your group',
-        submitButtonText: 'Вибрати',
         dataList: _listOfGroups,
         selectedItem: (String selected) {
           setState(() {
@@ -103,6 +114,23 @@ class FirstAuthPageState extends State<FirstAuthPage> {
         },
         enableMultipleSelection: false,
         searchController: _groupController,
+      ),
+    ).showModal(context);
+  }
+
+  void openDropDownSubjects() {
+    DropDownState(
+      DropDown(
+        submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
+        searchHintText: 'Type to search your subjects',
+        dataList: _listOfSubjects,
+        selectedItem: (String selected) {
+          setState(() {
+            _subjectController.text = selected;
+          });
+        },
+        enableMultipleSelection: false,
+        searchController: _subjectController,
       ),
     ).showModal(context);
   }
@@ -199,6 +227,38 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               ),
             ),
           ),
+          SizedBox(height: kDefaultPadding),
+          Container(
+            //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
+            padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+            decoration: BoxDecoration(
+              color: kFormFillColor,
+              border: Border.all(width: 1, color: Colors.transparent),
+              borderRadius: BorderRadius.circular(kDefaultRadius),
+            ),
+            child: TextField(
+              controller: _subjectController,
+              readOnly: true,
+              enabled: isSchoolSelected,
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                openDropDownSubjects();
+              },
+              style: TextStyle(
+                fontSize: 14,
+                color: isSchoolSelected ? kBlueTextColor : kErrorColor,
+              ),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: isSchoolSelected
+                    ? 'Press to select your subjects'
+                    : 'Please choose school first',
+                hintStyle: TextStyle(
+                    color: isSchoolSelected ? kBlueTextColor : kErrorColor),
+              ),
+            ),
+          )
         ];
       case 3: //Director
         return [
@@ -210,14 +270,14 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               borderRadius: BorderRadius.circular(kDefaultRadius),
             ),
             child: TextField(
-              controller: _surnameController,
+              controller: _middleNameController,
               style: const TextStyle(
                 fontSize: 14,
                 color: kBlueTextColor,
               ),
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Surname',
+                hintText: 'Middle Name',
                 hintStyle: TextStyle(color: kBlueTextColor),
                 icon: Icon(
                   Icons.text_fields,
@@ -251,7 +311,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                     borderRadius: BorderRadius.circular(kDefaultRadius),
                   ),
                   child: TextField(
-                    controller: _surnameController,
+                    controller: _middleNameController,
                     style: const TextStyle(
                       fontSize: 14,
                       color: kBlueTextColor,
@@ -413,7 +473,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                       borderRadius: BorderRadius.circular(kDefaultRadius),
                     ),
                     child: TextField(
-                      controller: _lastNameController,
+                      controller: _surnameController,
                       style: const TextStyle(
                         fontSize: 14,
                         color: kBlueTextColor,
@@ -437,12 +497,16 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const SelectSubjectsPage())),
                       style: ElevatedButton.styleFrom(
                           primary: const Color.fromARGB(255, 21, 47, 141),
                           shape: const StadiumBorder()),
                       child: Text(
-                        roleIndex == 2 ? 'Дальше' : 'Зберегти',
+                        roleIndex == 1 ? 'Дальше' : 'Зберегти',
                         style:
                             const TextStyle(fontSize: 18, color: Colors.white),
                       ),
