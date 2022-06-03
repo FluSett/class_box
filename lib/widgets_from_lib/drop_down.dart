@@ -121,12 +121,6 @@ class _MainBodyState extends State<MainBody> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  /// Bottom sheet title text
-                  //Text(
-                  //  widget.dropDown.bottomSheetTitle ?? 'Title',
-                  //  style: const TextStyle(
-                  //      fontWeight: FontWeight.bold, fontSize: 20.0),
-                  //),
                   Expanded(
                     child: Container(),
                   ),
@@ -177,6 +171,7 @@ class _MainBodyState extends State<MainBody> {
                 borderRadius: BorderRadius.circular(kDefaultRadius),
               ),
               child: TextField(
+                onChanged: _buildSearchList,
                 controller: widget.dropDown.searchController,
                 style: const TextStyle(
                   fontSize: 14,
