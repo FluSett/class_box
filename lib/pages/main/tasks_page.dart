@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class DownloadedPage extends StatefulWidget {
-  const DownloadedPage({Key? key}) : super(key: key);
+class TasksPage extends StatefulWidget {
+  const TasksPage({Key? key}) : super(key: key);
 
   @override
-  DownloadedPageState createState() => DownloadedPageState();
+  TasksPageState createState() => TasksPageState();
 }
 
-class DownloadedPageState extends State<DownloadedPage> {
+class TasksPageState extends State<TasksPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
