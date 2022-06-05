@@ -3,7 +3,7 @@ description: ClassBox for Study.
 
 publish_to: 'none'
 
-version: 0.1.1+1
+version: 0.2.3+1
 
 environment:
   sdk: ">=2.17.1 <3.0.0"
@@ -20,6 +20,7 @@ dependencies:
   material_design_icons_flutter: ^5.0.6595
   blurrycontainer: ^1.0.2
   flutter_facebook_auth: ^4.3.4
+  cloud_firestore: ^3.1.17
 
 dev_dependencies:
   flutter_test:
