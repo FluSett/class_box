@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../pages/downloaded_page.dart';
-import '../pages/home_page.dart';
-import '../pages/peoples_page.dart';
-import '../pages/profile_page.dart';
+import '../pages/main/tasks_page.dart';
+import '../pages/main/home_page.dart';
+import '../pages/main/requests_page.dart';
+import '../pages/main/profile_page.dart';
 
 class KNavigationBar extends StatefulWidget {
   const KNavigationBar({Key? key}) : super(key: key);

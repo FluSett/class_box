@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../database/firebase_auth_handler.dart';
-import 'splash_page.dart';
+import '../../database/firebase_auth_handler.dart';
+import '../splash_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
