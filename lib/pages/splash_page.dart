@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../components/navigation_bar.dart';
 import '../constants.dart';
 import '../database/firebase_auth_handler.dart';
+import '../database/firestore_user_handler.dart';
+import 'auth/first_auth_page.dart';
 import 'auth/sign_up_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -17,6 +19,7 @@ class SplashPageState extends State<SplashPage> {
   //  final status = await Permission.storage.request();
   //  print(status);
   //}
+  bool docExist = true;
 
   @override
   void initState() {
@@ -24,14 +27,29 @@ class SplashPageState extends State<SplashPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = FirebaseAuthHandler().getCurrentUser();
 
-      user != null
-          ? Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const KNavigationBar()))
-          : Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const SignUpPage()));
+      if (user != null) {
+        getUserStatus().whenComplete(() {
+          if (docExist) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const KNavigationBar()));
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const FirstAuthPage()));
+          }
+        });
+      } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SignUpPage()));
+      }
     });
 
     super.initState();
+  }
+
+  Future getUserStatus() async {
+    docExist = await FirestoreUserHandler().checkUserOnStorage();
   }
 
   @override
