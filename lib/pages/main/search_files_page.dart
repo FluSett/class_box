@@ -2,18 +2,18 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
-import '../widgets/new_book_box.dart';
-import '../widgets/text_tab.dart';
+import '../../constants.dart';
+import '../../widgets/new_book_box.dart';
+import '../../widgets/text_tab.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class SearchFilesPage extends StatefulWidget {
+  const SearchFilesPage({Key? key}) : super(key: key);
 
   @override
-  HomePageState createState() => HomePageState();
+  SearchFilesPageState createState() => SearchFilesPageState();
 }
 
-class HomePageState extends State<HomePage> {
+class SearchFilesPageState extends State<SearchFilesPage> {
   final _scrollController = ScrollController();
   final _newBooksController = ScrollController();
 
@@ -131,7 +131,7 @@ class HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     const Text(
-                      'Pocket Lib',
+                      'ClassBox',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 26,

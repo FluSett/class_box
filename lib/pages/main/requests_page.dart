@@ -10,9 +10,9 @@ class PeoplesPage extends StatefulWidget {
 class PeoplesPageState extends State<PeoplesPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: Text('Peoples Page'),
+        child: Text('Requests Page'),
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import '../../widgets_from_lib/drop_down.dart';
-import '../home_page.dart';
+import '../main/home_page.dart';
 
 class SelectSubjectsPage extends StatefulWidget {
   const SelectSubjectsPage({Key? key}) : super(key: key);

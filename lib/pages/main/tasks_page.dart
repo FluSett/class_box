@@ -10,9 +10,9 @@ class DownloadedPage extends StatefulWidget {
 class DownloadedPageState extends State<DownloadedPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: Text('Download Page'),
+        child: Text('Tasks Page'),
       ),
     );
   }
