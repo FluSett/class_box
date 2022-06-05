@@ -1,9 +1,15 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:class_box/database/firestore_user_handler.dart';
+import 'package:class_box/models/users/director_model.dart';
 import 'package:flutter/material.dart';
 
+import '../../components/navigation_bar.dart';
 import '../../constants.dart';
+import '../../models/users/student_model.dart';
+import '../../models/users/teacher_model.dart';
 import '../../widgets_from_lib/drop_down.dart';
 import '../method-pages/select_subjects_page.dart';
+import '../splash_page.dart';
 
 class FirstAuthPage extends StatefulWidget {
   const FirstAuthPage({Key? key}) : super(key: key);
@@ -16,6 +22,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
   final _firstNameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _middleNameController = TextEditingController();
+  final _newSchoolController = TextEditingController();
   final _schoolController = TextEditingController();
   final _groupController = TextEditingController();
   final _subjectController = TextEditingController();
@@ -82,6 +89,41 @@ class FirstAuthPageState extends State<FirstAuthPage> {
       });
     });
     super.initState();
+  }
+
+  void addDatabaseUser() {
+    switch (roleIndex) {
+      case 1: //Student
+        StudentModel student = StudentModel(
+            _firstNameController.text,
+            _surnameController.text,
+            _schoolController.text,
+            _groupController.text);
+        FirestoreUserHandler().addStudent(student).whenComplete(() =>
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const SplashPage())));
+        break;
+      case 2: //Teacher
+        TeacherModel teacher = TeacherModel(
+            _firstNameController.text,
+            _surnameController.text,
+            _schoolController.text,
+            _subjectController.text);
+        FirestoreUserHandler().addTeacher(teacher).whenComplete(() =>
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const SplashPage())));
+        break;
+      case 3: //Director
+        DirectorModel director = DirectorModel(_firstNameController.text,
+            _surnameController.text, _middleNameController.text);
+        if (!isSchoolRegistered) director.school = _newSchoolController.text;
+        FirestoreUserHandler().addDirector(director).whenComplete(() =>
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const SplashPage())));
+        break;
+      default:
+        break;
+    }
   }
 
   void openDropDownSchools() {
@@ -311,7 +353,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                     borderRadius: BorderRadius.circular(kDefaultRadius),
                   ),
                   child: TextField(
-                    controller: _middleNameController,
+                    controller: _newSchoolController,
                     style: const TextStyle(
                       fontSize: 14,
                       color: kBlueTextColor,
@@ -480,7 +522,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                       ),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Last Name',
+                        hintText: 'Surname',
                         hintStyle: TextStyle(color: kBlueTextColor),
                         icon: Icon(
                           Icons.text_fields,
@@ -497,11 +539,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const SelectSubjectsPage())),
+                      onPressed: addDatabaseUser,
                       style: ElevatedButton.styleFrom(
                           primary: const Color.fromARGB(255, 21, 47, 141),
                           shape: const StadiumBorder()),
