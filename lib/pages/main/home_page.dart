@@ -14,7 +14,6 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEBECF1),
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
@@ -46,60 +45,30 @@ class HomePageState extends State<HomePage> {
             ),
           ];
         },
-        body: ListView.builder(
-          itemCount: 100,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {},
-              child: Container(
-                margin: EdgeInsets.only(
-                  bottom: kDefaultPadding,
-                  right: kDefaultPadding,
-                  left: kDefaultPadding,
-                ),
-                padding: EdgeInsets.all(kDefaultPadding),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(kDefaultRadius),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width -
-                          kDefaultPadding * 7,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'TASdasdh asdh aisd iajd asasdasda asd asd asd ad ada da sdas das as d',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: kDefaultPadding / 2),
-                          const Text(
-                            '     TASdasdh asdh aisd iajd as asda sd ad asd d',
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: kDefaultPadding,
+              mainAxisSpacing: kDefaultPadding,
+            ),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {},
+                child: Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(kDefaultPadding),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(kDefaultRadius),
                     ),
-                    const Icon(
-                      Icons.keyboard_arrow_right_outlined,
-                      size: 28,
-                    ),
-                  ],
+                    child: SizedBox(),
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
