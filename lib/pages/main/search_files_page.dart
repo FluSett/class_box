@@ -16,7 +16,7 @@ class SearchFilesPageState extends State<SearchFilesPage> {
   double top = 0.0;
   double opacity = 1.0;
 
-  String fileType = 'File';
+  String fileType = 'Afqk';
   String fileSchool = '1asdasd';
   String fileLVL = '1';
   String fileGroup = 'A1';
