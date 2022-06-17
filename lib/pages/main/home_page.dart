@@ -1,3 +1,4 @@
+import 'package:class_box/components/grids/default_staggered_grid_view.dart';
 import 'package:class_box/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -47,28 +48,7 @@ class HomePageState extends State<HomePage> {
         },
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: kDefaultPadding,
-              mainAxisSpacing: kDefaultPadding,
-            ),
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {},
-                child: Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(kDefaultPadding),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(kDefaultRadius),
-                    ),
-                    child: SizedBox(),
-                  ),
-                ),
-              );
-            },
-          ),
+          child: const DefaultStaggeredGridView(),
         ),
       ),
       floatingActionButton: FloatingActionButton(

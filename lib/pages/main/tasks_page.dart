@@ -80,9 +80,14 @@ class TasksPageState extends State<TasksPage> {
                           ),
                           SizedBox(height: kDefaultPadding / 2),
                           const Text(
+                            'TASdasdh asdh aisd iajd asasdasda asd asd asd ad ada da sdas das as d',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: kDefaultPadding / 2),
+                          const Text(
                             '     TASdasdh asdh aisd iajd as asda sd ad asd d',
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,

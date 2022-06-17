@@ -1,10 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
+import '../../components/grids/files_staggered_grid_view.dart';
 import '../../constants.dart';
-import '../../widgets/new_book_box.dart';
-import '../../widgets/text_tab.dart';
 
 class SearchFilesPage extends StatefulWidget {
   const SearchFilesPage({Key? key}) : super(key: key);
@@ -14,367 +11,299 @@ class SearchFilesPage extends StatefulWidget {
 }
 
 class SearchFilesPageState extends State<SearchFilesPage> {
-  final _scrollController = ScrollController();
-  final _newBooksController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
 
-  final _searchController = TextEditingController();
-  late double appBarSize;
-  double lastOffset = 0;
-  double currentOffset = 0;
+  double top = 0.0;
+  double opacity = 1.0;
 
-  late bool showCollection = true;
-  late bool showSearch = true;
-  bool isFirst = true;
+  String fileType = 'File';
+  String fileSchool = '1asdasd';
+  String fileLVL = '1';
+  String fileGroup = 'A1';
 
-  @override
-  void initState() {
-    showCollection = true;
-    showSearch = true;
-    appBarSize = 200;
-    _scrollController.addListener(_onScroll);
-    super.initState();
-  }
-
-  _onScroll() {
-    if (isFirst) {
-      setState(() {
-        lastOffset = _scrollController.offset;
-      });
+  void changeOpacity() {
+    if (top / 360 > 1) {
+      opacity = 1;
+    } else if (top / 360 < 0) {
+      opacity = 0;
     } else {
-      setState(() {
-        currentOffset = _scrollController.offset;
-      });
+      opacity = top / 360;
     }
-
-    if (appBarSize <= 200 && appBarSize >= 50) {
-      if (_scrollController.offset < lastOffset) {
-        setState(() {
-          appBarSize = appBarSize + 3;
-        });
-      } else {
-        setState(() {
-          appBarSize--;
-        });
-      }
-    } else if (appBarSize > 200) {
-      setState(() {
-        appBarSize = 200;
-      });
-      if (_scrollController.offset < lastOffset) {
-        setState(() {
-          appBarSize = appBarSize + 3;
-        });
-      } else {
-        setState(() {
-          appBarSize--;
-        });
-      }
-    } else if (appBarSize < 50) {
-      setState(() {
-        appBarSize = 50;
-      });
-      if (_scrollController.offset < lastOffset) {
-        setState(() {
-          appBarSize = appBarSize + 3;
-        });
-      } else {
-        setState(() {
-          appBarSize--;
-        });
-      }
-    }
-
-    if (appBarSize > 170 && lastOffset < 10) {
-      setState(() {
-        showCollection = true;
-      });
-    } else {
-      setState(() {
-        showCollection = false;
-      });
-    }
-
-    if (appBarSize > 80) {
-      setState(() {
-        showSearch = true;
-      });
-    } else {
-      showSearch = false;
-    }
-
-    setState(() {
-      isFirst = !isFirst;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          AnimatedContainer(
-            duration: const Duration(seconds: 300),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(
-                left: kDefaultPadding * 1.5,
-                top: kDefaultPadding * 1.5,
-              ),
-              decoration: const BoxDecoration(
-                color: Color.fromRGBO(255, 255, 255, 0.19),
-                image: DecorationImage(
-                  image: AssetImage('assets/images/home_bg.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    const Text(
-                      'ClassBox',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: kDefaultPadding * 1.5),
-                    showSearch
-                        ? Container(
-                            margin:
-                                EdgeInsets.only(right: kDefaultPadding * 1.5),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: kDefaultPadding),
-                            decoration: BoxDecoration(
-                              color: kFormFillColor,
-                              border: Border.all(
-                                  width: 1, color: Colors.transparent),
-                              borderRadius:
-                                  BorderRadius.circular(kDefaultRadius),
-                            ),
-                            child: TextField(
-                              controller: _searchController,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: kBlueTextColor,
-                              ),
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'What would like to read?',
-                                hintStyle: TextStyle(color: kBlueTextColor),
-                                icon: Icon(
-                                  Icons.search,
-                                  size: 18,
-                                  color: kBlueTextColor,
-                                ),
-                              ),
-                            ),
-                          )
-                        : const SizedBox(),
-                    showSearch
-                        ? SizedBox(height: kDefaultPadding)
-                        : const SizedBox(),
-                    showCollection
-                        ? Row(
-                            children: [
-                              const Text(
-                                'New Collection',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.more_vert,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              SizedBox(width: kDefaultPadding / 2.5),
-                            ],
-                          )
-                        : const SizedBox(),
-                    showCollection
-                        ? SizedBox(height: kDefaultPadding / 3)
-                        : const SizedBox(),
-                    showCollection
-                        ? SizedBox(
-                            width: double.infinity,
-                            height: 160,
-                            child: ScrollConfiguration(
-                              behavior:
-                                  ScrollConfiguration.of(context).copyWith(
-                                dragDevices: {
-                                  PointerDeviceKind.touch,
-                                  PointerDeviceKind.mouse,
-                                },
-                              ),
-                              child: ListView(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                controller: _newBooksController,
-                                scrollDirection: Axis.horizontal,
-                                children: const [
-                                  NewBookBox(
-                                      image:
-                                          'https://media.npr.org/assets/img/2015/02/13/reeves-f610c40457f259110600b974ae67c43aa313beb8-s1100-c50.jpg',
-                                      topic: 'Art',
-                                      name: 'Gestalt'),
-                                  NewBookBox(
-                                      image:
-                                          'https://media.npr.org/assets/img/2015/02/13/reeves-f610c40457f259110600b974ae67c43aa313beb8-s1100-c50.jpg',
-                                      topic: 'topic',
-                                      name: 'name'),
-                                  NewBookBox(
-                                      image:
-                                          'https://media.npr.org/assets/img/2015/02/13/reeves-f610c40457f259110600b974ae67c43aa313beb8-s1100-c50.jpg',
-                                      topic: 'topic',
-                                      name: 'name'),
-                                  NewBookBox(
-                                      image:
-                                          'https://media.npr.org/assets/img/2015/02/13/reeves-f610c40457f259110600b974ae67c43aa313beb8-s1100-c50.jpg',
-                                      topic: 'topic',
-                                      name: 'name'),
-                                  NewBookBox(
-                                      image:
-                                          'https://media.npr.org/assets/img/2015/02/13/reeves-f610c40457f259110600b974ae67c43aa313beb8-s1100-c50.jpg',
-                                      topic: 'topic',
-                                      name: 'name'),
-                                  NewBookBox(
-                                      image:
-                                          'https://media.npr.org/assets/img/2015/02/13/reeves-f610c40457f259110600b974ae67c43aa313beb8-s1100-c50.jpg',
-                                      topic: 'topic',
-                                      name: 'name'),
-                                ],
-                              ),
-                            ),
-                          )
-                        : const SizedBox(),
-                    showCollection
-                        ? SizedBox(height: kDefaultPadding * 1.8)
-                        : const SizedBox(),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ScrollConfiguration(
-                        behavior: ScrollConfiguration.of(context).copyWith(
-                          dragDevices: {
-                            PointerDeviceKind.touch,
-                            PointerDeviceKind.mouse
-                          },
-                        ),
-                        child: ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          controller: _newBooksController,
-                          scrollDirection: Axis.horizontal,
-                          children: const [
-                            TextTab(name: 'Popular', isActive: true),
-                            TextTab(name: 'Art', isActive: false),
-                            TextTab(name: 'Business', isActive: false),
-                            TextTab(name: 'Craft', isActive: false),
-                            TextTab(name: 'Design', isActive: false),
-                          ],
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              expandedHeight: 330.0,
+              floating: false,
+              pinned: true,
+              leading: const SizedBox(),
+              backgroundColor: Colors.blueAccent,
+              flexibleSpace: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                top = constraints.biggest.height;
+                changeOpacity();
+                return AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: 1.0,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: const AssetImage('assets/images/home_bg.png'),
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(
+                          Colors.black.withOpacity(opacity),
+                          BlendMode.dstATop,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
+                    child: SafeArea(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Search Files',
+                            style: TextStyle(
+                              fontSize: top < 140 ? top / 4.5 : 139 / 4.5,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: top > 170 ? kDefaultPadding : 0),
+                          top > 180
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: kDefaultPadding),
+                                  decoration: BoxDecoration(
+                                    color: kFormFillColor,
+                                    border: Border.all(
+                                        width: 1, color: Colors.transparent),
+                                    borderRadius:
+                                        BorderRadius.circular(kDefaultRadius),
+                                  ),
+                                  child: TextField(
+                                    controller: _searchController,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: kBlueTextColor,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Type a file name to search...',
+                                      hintStyle:
+                                          TextStyle(color: kBlueTextColor),
+                                      icon: Icon(
+                                        Icons.search,
+                                        size: 18,
+                                        color: kBlueTextColor,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          SizedBox(height: kDefaultPadding),
+                          top > 260 //TODO: CHANGE TO WRAP
+                              ? AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      DropdownButton<String>(
+                                        value: fileType,
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: kBlueTextColor,
+                                        ),
+                                        elevation: 16,
+                                        style: const TextStyle(
+                                            color: kBlueTextColor),
+                                        underline: Container(
+                                          height: 2,
+                                          color: kBlueTextColor,
+                                        ),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            fileType = newValue!;
+                                          });
+                                        },
+                                        items: <String>['File', 'Test']
+                                            .map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
+                                      DropdownButton<String>(
+                                        value: fileSchool,
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: kBlueTextColor,
+                                        ),
+                                        elevation: 16,
+                                        style: const TextStyle(
+                                            color: kBlueTextColor),
+                                        underline: Container(
+                                          height: 2,
+                                          color: kBlueTextColor,
+                                        ),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            fileSchool = newValue!;
+                                          });
+                                        },
+                                        items: <String>[
+                                          '1asdasd',
+                                          '2asdasd',
+                                          '3asdasd',
+                                          '4asdasd',
+                                          '5asdasda',
+                                          '6asdasda',
+                                          '7asdasda',
+                                          '8asdasda',
+                                          '9asdasda',
+                                          '10asdasda',
+                                          '11asdasda',
+                                          '12asdasda',
+                                          '13asdasda',
+                                          '14asdasda',
+                                          '15asdasda',
+                                          '16asdasda',
+                                          '17asdasda',
+                                          '18asdasda',
+                                          '19asdasda',
+                                          '20asdasda',
+                                          '21asdasda',
+                                        ].map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
+                                      DropdownButton<String>(
+                                        value: fileLVL,
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: kBlueTextColor,
+                                        ),
+                                        elevation: 16,
+                                        style: const TextStyle(
+                                            color: kBlueTextColor),
+                                        underline: Container(
+                                          height: 2,
+                                          color: kBlueTextColor,
+                                        ),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            fileLVL = newValue!;
+                                          });
+                                        },
+                                        items: <String>[
+                                          '1',
+                                          '2',
+                                          '3',
+                                          '4',
+                                          '5',
+                                          '6',
+                                          '7',
+                                          '8',
+                                          '9',
+                                          '10',
+                                          '11',
+                                          '12',
+                                          '13',
+                                          '14',
+                                          '15',
+                                          '16',
+                                          '17',
+                                          '18',
+                                          '19',
+                                          '20',
+                                          '21',
+                                        ].map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
+                                      DropdownButton<String>(
+                                        value: fileGroup,
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: kBlueTextColor,
+                                        ),
+                                        elevation: 16,
+                                        style: const TextStyle(
+                                            color: kBlueTextColor),
+                                        underline: Container(
+                                          height: 2,
+                                          color: kBlueTextColor,
+                                        ),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            fileGroup = newValue!;
+                                          });
+                                        },
+                                        items: <String>[
+                                          'A1',
+                                          'B2',
+                                          'C3',
+                                          'D4',
+                                          'E5',
+                                          'Q6',
+                                          'W7',
+                                          'R8',
+                                          'T9',
+                                          'Y10',
+                                          'U11',
+                                          'I12',
+                                          'O13',
+                                          'P14',
+                                          'S15',
+                                          'G16',
+                                          'H17',
+                                          'J18',
+                                          'K19',
+                                          'L20',
+                                          'M21',
+                                        ].map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox(),
+                          SizedBox(height: top > 170 ? kDefaultPadding : 0),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  const SizedBox(height: 30.0),
-                  Container(
-                    height: 80,
-                    color: Colors.orange,
-                  ),
-                  const SizedBox(height: 20.0),
-                  Container(
-                    height: 80,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(height: 30.0),
-                  Container(
-                    height: 80,
-                    color: Colors.yellow,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    height: 80,
-                    color: Colors.pink,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    height: 80,
-                    color: Colors.orange,
-                  ),
-                  const SizedBox(height: 20.0),
-                  Container(
-                    height: 80,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(height: 30.0),
-                  Container(
-                    height: 80,
-                    color: Colors.yellow,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    height: 80,
-                    color: Colors.pink,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    height: 80,
-                    color: Colors.orange,
-                  ),
-                  const SizedBox(height: 20.0),
-                  Container(
-                    height: 80,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(height: 30.0),
-                  Container(
-                    height: 80,
-                    color: Colors.yellow,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    height: 80,
-                    color: Colors.pink,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    height: 80,
-                    color: Colors.orange,
-                  ),
-                  const SizedBox(height: 20.0),
-                  Container(
-                    height: 80,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(height: 30.0),
-                  Container(
-                    height: 80,
-                    color: Colors.yellow,
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    height: 80,
-                    color: Colors.pink,
-                  ),
-                  const SizedBox(height: 10.0),
-                ],
-              ),
-            ),
-          ),
-        ],
+          ];
+        },
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+          child: const FilesStaggeredGridView(),
+        ),
       ),
     );
   }
