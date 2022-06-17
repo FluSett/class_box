@@ -8,7 +8,9 @@ import '../pages/main/requests_page.dart';
 import '../pages/main/profile_page.dart';
 
 class KNavigationBar extends StatefulWidget {
-  const KNavigationBar({Key? key}) : super(key: key);
+  const KNavigationBar({Key? key, required this.role}) : super(key: key);
+
+  final String role;
 
   @override
   KNavigationBarState createState() => KNavigationBarState();
@@ -102,11 +104,11 @@ class KNavigationBarState extends State<KNavigationBar> {
     Icons.person_rounded,
   ];
 
-  List<String> listOfStrings = [
-    'Home',
-    'Tasks',
-    'Files',
-    'Requests',
-    'Profile',
+  late List<String> listOfStrings = [
+    widget.role == 'Director' ? 'Інформація' : 'Предмети',
+    widget.role == 'Student' ? 'Завдання' : 'Обрані',
+    'Файли',
+    'Запити',
+    'Профіль',
   ];
 }

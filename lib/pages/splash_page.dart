@@ -20,6 +20,7 @@ class SplashPageState extends State<SplashPage> {
   //  print(status);
   //}
   bool docExist = true;
+  String a = '';
 
   @override
   void initState() {
@@ -30,10 +31,10 @@ class SplashPageState extends State<SplashPage> {
       if (user != null) {
         getUserStatus().whenComplete(() {
           if (docExist) {
-            Navigator.push(
+            getUserRole().whenComplete(() => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const KNavigationBar()));
+                    builder: (context) => KNavigationBar(role: a))));
           } else {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const FirstAuthPage()));
@@ -50,6 +51,10 @@ class SplashPageState extends State<SplashPage> {
 
   Future getUserStatus() async {
     docExist = await FirestoreUserHandler().checkUserOnStorage();
+  }
+
+  Future getUserRole() async {
+    a = await FirestoreUserHandler().getUserRole();
   }
 
   @override
