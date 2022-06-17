@@ -106,7 +106,7 @@ class FirebaseAuthHandler {
     await user.sendEmailVerification();
   }
 
-  Future<void> sendPasswordReset(User user, String email) async {
+  Future<void> sendPasswordReset(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
