@@ -3,6 +3,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../../constants.dart';
 import '../../database/firebase_auth_handler.dart';
+import '../info/privacy_policy_page.dart';
+import '../info/terms_of_use_page.dart';
 import '../splash_page.dart';
 import 'log_in_page.dart';
 
@@ -297,7 +299,10 @@ class SignUpPageState extends State<SignUpPage> {
                       style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const TermsOfUsePage())),
                       child: const Text(
                         'Правилами Користування',
                         style: TextStyle(
@@ -318,7 +323,10 @@ class SignUpPageState extends State<SignUpPage> {
                       style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PrivacyPolicyPage())),
                       child: const Text(
                         'Політикою Конфіденційності',
                         style: TextStyle(
