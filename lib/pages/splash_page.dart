@@ -75,7 +75,7 @@ class SplashPageState extends State<SplashPage> {
         child: Column(
           children: [
             const Text(
-              'Pocket Lib',
+              'ClassBox',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 26,

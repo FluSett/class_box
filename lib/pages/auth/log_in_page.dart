@@ -60,7 +60,7 @@ class LogInPageState extends State<LogInPage> {
                           MaterialPageRoute(
                               builder: (context) => const SignUpPage())),
                       child: const Text(
-                        'Sign up',
+                        'Реєстрація',
                         style: TextStyle(color: kBlueTextColor, fontSize: 18),
                       ),
                     ),
@@ -69,7 +69,7 @@ class LogInPageState extends State<LogInPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Log in',
+                      'Вхід',
                       style: TextStyle(
                         color: Color(0xFFFbFeFF),
                         fontSize: 22,
@@ -93,7 +93,7 @@ class LogInPageState extends State<LogInPage> {
                       ),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Email',
+                        hintText: 'Емайл',
                         hintStyle: TextStyle(color: kBlueTextColor),
                         icon: Icon(
                           Icons.email,
@@ -121,7 +121,7 @@ class LogInPageState extends State<LogInPage> {
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(top: 14),
                         border: InputBorder.none,
-                        hintText: 'Password',
+                        hintText: 'Пароль',
                         hintStyle: const TextStyle(color: kBlueTextColor),
                         icon: const Icon(
                           Icons.lock,
@@ -157,14 +157,14 @@ class LogInPageState extends State<LogInPage> {
                           primary: const Color.fromARGB(255, 21, 47, 141),
                           shape: const StadiumBorder()),
                       child: const Text(
-                        'Log in',
+                        'Вхід',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ),
                   SizedBox(height: kDefaultPadding * 1.5),
                   const Text(
-                    'Or log in with social account',
+                    'Або скористайтесь додатковими способами авторизації',
                     style: TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                   SizedBox(height: kDefaultPadding * 1.5),

@@ -48,7 +48,7 @@ class SignUpPageState extends State<SignUpPage> {
             right: kDefaultPadding * 1.5,
             left: kDefaultPadding * 1.5,
             top: kDefaultPadding * 1.5,
-            bottom: kDefaultPadding * 2.5,
+            bottom: kDefaultPadding * 2,
           ),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -70,7 +70,7 @@ class SignUpPageState extends State<SignUpPage> {
                         MaterialPageRoute(
                             builder: (context) => const LogInPage())),
                     child: const Text(
-                      'Log in',
+                      'Вхід',
                       style: TextStyle(color: kBlueTextColor, fontSize: 18),
                     ),
                   ),
@@ -79,7 +79,7 @@ class SignUpPageState extends State<SignUpPage> {
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Sign up',
+                    'Реєстрація',
                     style: TextStyle(
                       color: Color(0xFFFbFeFF),
                       fontSize: 22,
@@ -103,7 +103,7 @@ class SignUpPageState extends State<SignUpPage> {
                     ),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Email',
+                      hintText: 'Емайл',
                       hintStyle: TextStyle(color: kBlueTextColor),
                       icon: Icon(
                         Icons.email,
@@ -131,7 +131,7 @@ class SignUpPageState extends State<SignUpPage> {
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.only(top: 14),
                       border: InputBorder.none,
-                      hintText: 'Password',
+                      hintText: 'Пароль',
                       hintStyle: const TextStyle(color: kBlueTextColor),
                       icon: const Icon(
                         Icons.lock,
@@ -167,7 +167,7 @@ class SignUpPageState extends State<SignUpPage> {
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.only(top: 14),
                       border: InputBorder.none,
-                      hintText: 'Repeat Password',
+                      hintText: 'Повторіть пароль',
                       hintStyle: const TextStyle(color: kBlueTextColor),
                       icon: const Icon(
                         Icons.lock_reset,
@@ -195,14 +195,14 @@ class SignUpPageState extends State<SignUpPage> {
                         primary: const Color.fromARGB(255, 21, 47, 141),
                         shape: const StadiumBorder()),
                     child: const Text(
-                      'Sign up',
+                      'Реєстрація',
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
                 ),
                 SizedBox(height: kDefaultPadding * 1.5),
                 const Text(
-                  'Or sign up with social account',
+                  'Або скористайтесь додатковими способами авторизації',
                   style: TextStyle(fontSize: 14, color: Colors.white70),
                 ),
                 SizedBox(height: kDefaultPadding * 1.5),
@@ -281,17 +281,25 @@ class SignUpPageState extends State<SignUpPage> {
                   ],
                 ),
                 const Spacer(),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Реєструючись ви погоджуєтесь',
+                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                  ),
+                ),
+                SizedBox(height: kDefaultPadding / 8),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.2),
                     const Text(
-                      'By signing up you agree to our ',
+                      'з ',
                       style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                     GestureDetector(
                       onTap: () {},
                       child: const Text(
-                        'Terms of Use',
+                        'Правилами Користування',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.white70,
@@ -301,17 +309,18 @@ class SignUpPageState extends State<SignUpPage> {
                     ),
                   ],
                 ),
+                SizedBox(height: kDefaultPadding / 8),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.2),
                     const Text(
-                      'and',
+                      'та ',
                       style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
-                    TextButton(
-                      onPressed: () {},
+                    GestureDetector(
+                      onTap: () {},
                       child: const Text(
-                        'Privacy Policy',
+                        'Політикою Конфіденційності',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.white70,
