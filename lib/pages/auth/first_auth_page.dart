@@ -1,9 +1,14 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:class_box/database/firestore_school_handler.dart';
 import 'package:class_box/database/firestore_user_handler.dart';
+import 'package:class_box/models/school_model.dart';
 import 'package:class_box/models/users/director_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
+import '../../database/firebase_auth_handler.dart';
+import '../../database/firestore_requests_handler.dart';
 import '../../models/users/student_model.dart';
 import '../../models/users/teacher_model.dart';
 import '../../widgets_from_lib/drop_down.dart';
@@ -30,20 +35,8 @@ class FirstAuthPageState extends State<FirstAuthPage> {
   bool isSchoolRegistered = true;
   bool isSchoolSelected = false;
 
-  final List<SelectedListItem> _listOfSchools = [
-    SelectedListItem(false, 'Tokyo'),
-    SelectedListItem(false, 'New York'),
-    SelectedListItem(false, 'London'),
-    SelectedListItem(false, 'Paris'),
-    SelectedListItem(false, 'Madrid'),
-    SelectedListItem(false, 'Dubai'),
-    SelectedListItem(false, 'Rome'),
-    SelectedListItem(false, 'Barcelona'),
-    SelectedListItem(false, 'Cologne'),
-    SelectedListItem(false, 'Monte Carlo'),
-    SelectedListItem(false, 'Puebla'),
-    SelectedListItem(false, 'Florence'),
-  ];
+  late List<SelectedListItem> _schools;
+  List<SchoolModel> _schoolsModels = [];
 
   final List<SelectedListItem> _listOfGroups = [
     SelectedListItem(false, 'P-10'),
@@ -89,6 +82,42 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     super.initState();
   }
 
+  void fetchSchools(Map<int, dynamic> dbData) {
+    List<SelectedListItem> tempSchools = [];
+
+    for (int value = 0; value < dbData.length; value++) {
+      tempSchools.add(SelectedListItem(false, dbData[value]['name']));
+      _schoolsModels.add(SchoolModel(
+        name: dbData[value]['name'],
+        token: dbData[value]['token'].toString(),
+        id: dbData[value]['id'],
+        peoples: [],
+      ));
+    }
+
+    _schools = tempSchools;
+  }
+
+  Future<void> sendDirectorRequest(DirectorModel director) async {
+    final userUid = FirebaseAuthHandler().getCurrentUser()!.uid.toString();
+
+    final findedSchool = _schoolsModels.firstWhere(
+        (element) => element.name == _schoolController.text, orElse: () {
+      return SchoolModel(
+          id: 'id', name: 'name', token: 'token', peoples: ['peoples']);
+    });
+
+    FirestoreSchoolHandler()
+        .addSchoolPeople('Director', 'waiting', userUid, findedSchool.token);
+
+    FirestoreRequestsHandler().sendDirectorSchoolRequest(
+        userUid,
+        '${director.surname} ${director.firstName} ${director.middleName}',
+        findedSchool.id,
+        findedSchool.name,
+        'waiting');
+  }
+
   void addDatabaseUser() {
     switch (roleIndex) {
       case 1: //Student
@@ -114,10 +143,23 @@ class FirstAuthPageState extends State<FirstAuthPage> {
       case 3: //Director
         DirectorModel director = DirectorModel(_firstNameController.text,
             _surnameController.text, _middleNameController.text);
-        if (!isSchoolRegistered) director.school = _newSchoolController.text;
-        FirestoreUserHandler().addDirector(director).whenComplete(() =>
-            Navigator.push(context,
+        //if (!isSchoolRegistered) director.school = _newSchoolController.text;
+        FirestoreUserHandler()
+            .addDirector(director, _newSchoolController.text)
+            .whenComplete(() {
+          if (isSchoolRegistered) {
+            sendDirectorRequest(director).whenComplete(() => Navigator.push(
+                context,
                 MaterialPageRoute(builder: (context) => const SplashPage())));
+          } else {
+            FirestoreSchoolHandler()
+                .createSchool(_newSchoolController.text)
+                .whenComplete(() => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SplashPage())));
+          }
+        });
         break;
       default:
         break;
@@ -130,7 +172,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
         submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
         searchHintText:
             'Почніть набирати текст для пошуку навчального закладу...',
-        dataList: _listOfSchools,
+        dataList: _schools,
         selectedItem: (String selected) {
           setState(() {
             _schoolController.text = selected;
@@ -180,32 +222,55 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     switch (roleIndex) {
       case 1: //Student
         return [
-          Container(
-            //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
-            padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
-            decoration: BoxDecoration(
-              color: kFormFillColor,
-              border: Border.all(width: 1, color: Colors.transparent),
-              borderRadius: BorderRadius.circular(kDefaultRadius),
-            ),
-            child: TextField(
-              controller: _schoolController,
-              readOnly: true,
-              onTap: () {
-                FocusScope.of(context).unfocus();
-                openDropDownSchools();
-              },
-              style: const TextStyle(
-                fontSize: 14,
-                color: kBlueTextColor,
-              ),
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Натисніть для вибору навчального закладу',
-                hintStyle: TextStyle(color: kBlueTextColor),
-              ),
-            ),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirestoreSchoolHandler().getSchools(),
+            builder:
+                ((BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text(
+                    "Error: Something went wrong"); //TODO: ERROR ICON
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+
+              if (snapshot.data!.docs.isEmpty) {
+                return const Text("Error: no data"); //TODO: ERROR ICON
+              }
+
+              Map<int, dynamic> data = snapshot.data!.docs.asMap();
+
+              fetchSchools(data);
+
+              return Container(
+                //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
+                padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                decoration: BoxDecoration(
+                  color: kFormFillColor,
+                  border: Border.all(width: 1, color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(kDefaultRadius),
+                ),
+                child: TextField(
+                  controller: _schoolController,
+                  readOnly: true,
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    openDropDownSchools();
+                  },
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: kBlueTextColor,
+                  ),
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Натисніть для вибору навчального закладу',
+                    hintStyle: TextStyle(color: kBlueTextColor),
+                  ),
+                ),
+              );
+            }),
           ),
           SizedBox(height: kDefaultPadding),
           Container(
@@ -242,31 +307,54 @@ class FirstAuthPageState extends State<FirstAuthPage> {
         ];
       case 2: //Teacher
         return [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
-            decoration: BoxDecoration(
-              color: kFormFillColor,
-              border: Border.all(width: 1, color: Colors.transparent),
-              borderRadius: BorderRadius.circular(kDefaultRadius),
-            ),
-            child: TextField(
-              controller: _schoolController,
-              readOnly: true,
-              onTap: () {
-                FocusScope.of(context).unfocus();
-                openDropDownSchools();
-              },
-              style: const TextStyle(
-                fontSize: 14,
-                color: kBlueTextColor,
-              ),
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Натисніть для вибору навчального закладу',
-                hintStyle: TextStyle(color: kBlueTextColor),
-              ),
-            ),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirestoreSchoolHandler().getSchools(),
+            builder:
+                ((BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text(
+                    "Error: Something went wrong"); //TODO: ERROR ICON
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+
+              if (snapshot.data!.docs.isEmpty) {
+                return const Text("Error: no data"); //TODO: ERROR ICON
+              }
+
+              Map<int, dynamic> data = snapshot.data!.docs.asMap();
+
+              fetchSchools(data);
+
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                decoration: BoxDecoration(
+                  color: kFormFillColor,
+                  border: Border.all(width: 1, color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(kDefaultRadius),
+                ),
+                child: TextField(
+                  controller: _schoolController,
+                  readOnly: true,
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    openDropDownSchools();
+                  },
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: kBlueTextColor,
+                  ),
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Натисніть для вибору навчального закладу',
+                    hintStyle: TextStyle(color: kBlueTextColor),
+                  ),
+                ),
+              );
+            }),
           ),
           SizedBox(height: kDefaultPadding),
           Container(
@@ -341,9 +429,57 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               isSchoolRegistered = value!;
             }),
           ),
-          SizedBox(height: !isSchoolRegistered ? kDefaultPadding : 0.0),
+          SizedBox(height: kDefaultPadding),
           isSchoolRegistered
-              ? const SizedBox()
+              ? StreamBuilder<QuerySnapshot>(
+                  stream: FirestoreSchoolHandler().getSchools(),
+                  builder: ((BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text(
+                          "Error: Something went wrong"); //TODO: ERROR ICON
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+
+                    if (snapshot.data!.docs.isEmpty) {
+                      return const Text("Error: no data"); //TODO: ERROR ICON
+                    }
+
+                    Map<int, dynamic> data = snapshot.data!.docs.asMap();
+
+                    fetchSchools(data);
+                    return Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                      decoration: BoxDecoration(
+                        color: kFormFillColor,
+                        border: Border.all(width: 1, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(kDefaultRadius),
+                      ),
+                      child: TextField(
+                        controller: _schoolController,
+                        readOnly: true,
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          openDropDownSchools();
+                        },
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: kBlueTextColor,
+                        ),
+                        textAlign: TextAlign.center,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Натисніть для вибору навчального закладу',
+                          hintStyle: TextStyle(color: kBlueTextColor),
+                        ),
+                      ),
+                    );
+                  }),
+                )
               : Container(
                   padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
                   decoration: BoxDecoration(

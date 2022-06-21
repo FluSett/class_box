@@ -8,9 +8,9 @@ class FirestoreUserHandler {
   final CollectionReference _users =
       FirebaseFirestore.instance.collection('users');
 
-  Future<void> addDirector(DirectorModel director) {
+  Future<void> addDirector(DirectorModel director, String school) {
     final userUid = FirebaseAuthHandler().getCurrentUser()!.uid.toString();
-    print(userUid.toString());
+
     return _users
         .doc(userUid)
         .set({
@@ -18,7 +18,11 @@ class FirestoreUserHandler {
           'firstName': director.firstName,
           'surname': director.surname,
           'middleName': director.middleName,
-          if (director.school != null) 'school': director.school,
+          'schools': [school],
+          'email':
+              FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
+                  ? 'Social'
+                  : FirebaseAuthHandler().getCurrentUser()!.email.toString(),
         })
         .then((value) => print('Director added'))
         .catchError((error) => print("Failed add director: $error"));
