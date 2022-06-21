@@ -67,4 +67,15 @@ class FirestoreUserHandler {
       return false;
     }
   }
+
+  Future<String> getUserRole() async {
+    final userUid = FirebaseAuthHandler().getCurrentUser()!.uid.toString();
+
+    try {
+      final data = await _users.doc(userUid).get();
+      return data['role'];
+    } catch (e) {
+      return 'none';
+    }
+  }
 }

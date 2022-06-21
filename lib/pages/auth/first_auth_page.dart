@@ -3,12 +3,10 @@ import 'package:class_box/database/firestore_user_handler.dart';
 import 'package:class_box/models/users/director_model.dart';
 import 'package:flutter/material.dart';
 
-import '../../components/navigation_bar.dart';
 import '../../constants.dart';
 import '../../models/users/student_model.dart';
 import '../../models/users/teacher_model.dart';
 import '../../widgets_from_lib/drop_down.dart';
-import '../method-pages/select_subjects_page.dart';
 import '../splash_page.dart';
 
 class FirstAuthPage extends StatefulWidget {
@@ -130,7 +128,8 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     DropDownState(
       DropDown(
         submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
-        searchHintText: 'Type to search your school...',
+        searchHintText:
+            'Почніть набирати текст для пошуку навчального закладу...',
         dataList: _listOfSchools,
         selectedItem: (String selected) {
           setState(() {
@@ -147,7 +146,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     DropDownState(
       DropDown(
         submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
-        searchHintText: 'Type to search your group',
+        searchHintText: 'Почніть набирати текст для пошуку групи...',
         dataList: _listOfGroups,
         selectedItem: (String selected) {
           setState(() {
@@ -164,7 +163,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     DropDownState(
       DropDown(
         submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
-        searchHintText: 'Type to search your subjects',
+        searchHintText: 'Почніть набирати текст для пошуку предмета...',
         dataList: _listOfSubjects,
         selectedItem: (String selected) {
           setState(() {
@@ -203,7 +202,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               textAlign: TextAlign.center,
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Press to select your school',
+                hintText: 'Натисніть для вибору навчального закладу',
                 hintStyle: TextStyle(color: kBlueTextColor),
               ),
             ),
@@ -233,8 +232,8 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: isSchoolSelected
-                    ? 'Press to select your group'
-                    : 'Please choose school first',
+                    ? 'Натисніть для вибору вашої групи'
+                    : 'Щоб продовжити виберіть навчальний заклад',
                 hintStyle: TextStyle(
                     color: isSchoolSelected ? kBlueTextColor : kErrorColor),
               ),
@@ -264,7 +263,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               textAlign: TextAlign.center,
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Press to select your school',
+                hintText: 'Натисніть для вибору навчального закладу',
                 hintStyle: TextStyle(color: kBlueTextColor),
               ),
             ),
@@ -294,8 +293,8 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: isSchoolSelected
-                    ? 'Press to select your subjects'
-                    : 'Please choose school first',
+                    ? 'Натисніть для вибору вашого предмету'
+                    : 'Щоб продовжити виберіть навчальний заклад',
                 hintStyle: TextStyle(
                     color: isSchoolSelected ? kBlueTextColor : kErrorColor),
               ),
@@ -319,7 +318,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
               ),
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Middle Name',
+                hintText: 'По батькові',
                 hintStyle: TextStyle(color: kBlueTextColor),
                 icon: Icon(
                   Icons.text_fields,
@@ -380,33 +379,32 @@ class FirstAuthPageState extends State<FirstAuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            color: Color.fromRGBO(255, 255, 255, 0.19),
-            image: DecorationImage(
-              image: AssetImage('assets/images/auth_bg.png'),
-              fit: BoxFit.cover,
-            ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(255, 255, 255, 0.19),
+          image: DecorationImage(
+            image: AssetImage('assets/images/auth_bg.png'),
+            fit: BoxFit.cover,
           ),
-          child: BlurryContainer(
-            padding: EdgeInsets.only(
-              right: kDefaultPadding * 1.5,
-              left: kDefaultPadding * 1.5,
-              top: kDefaultPadding * 4,
-              bottom: kDefaultPadding * 2.5,
-            ),
-            blur: 4,
-            borderRadius: BorderRadius.circular(0),
+        ),
+        child: BlurryContainer(
+          padding: EdgeInsets.only(
+            right: kDefaultPadding * 1.5,
+            left: kDefaultPadding * 1.5,
+          ),
+          blur: 4,
+          borderRadius: BorderRadius.circular(0),
+          child: SingleChildScrollView(
             child: SafeArea(
               child: Column(
                 children: [
+                  SizedBox(height: kDefaultPadding * 4),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'First Auth',
+                      'Перший вхід',
                       style: TextStyle(
                         color: Color(0xFFFbFeFF),
                         fontSize: 22,
@@ -429,7 +427,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                             activeColor: Colors.white,
                           ),
                           Text(
-                            'Student',
+                            'Студент',
                             style: TextStyle(
                               color: roleIndex == 1
                                   ? Colors.white
@@ -449,7 +447,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                             activeColor: Colors.white,
                           ),
                           Text(
-                            'Teacher',
+                            'Викладач',
                             style: TextStyle(
                               color: roleIndex == 2
                                   ? Colors.white
@@ -469,7 +467,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                             activeColor: Colors.white,
                           ),
                           Text(
-                            'Director',
+                            'Директор',
                             style: TextStyle(
                               color: roleIndex == 3
                                   ? Colors.white
@@ -496,7 +494,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                       ),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'First Name',
+                        hintText: 'Ім\'я',
                         hintStyle: TextStyle(color: kBlueTextColor),
                         icon: Icon(
                           Icons.text_fields,
@@ -522,7 +520,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                       ),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Surname',
+                        hintText: 'Прізвище',
                         hintStyle: TextStyle(color: kBlueTextColor),
                         icon: Icon(
                           Icons.text_fields,
@@ -550,6 +548,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
                       ),
                     ),
                   ),
+                  SizedBox(height: kDefaultPadding * 2.5),
                 ],
               ),
             ),

@@ -27,6 +27,7 @@ class App extends StatelessWidget {
           dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch}),
       title: 'ClassBox',
       theme: ThemeData(
+        scaffoldBackgroundColor: kBackgroundColor,
         unselectedWidgetColor: kBlueTextColor,
         textTheme: GoogleFonts.interTextTheme(),
       ),

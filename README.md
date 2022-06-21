@@ -1,4 +1,4 @@
-# class_box
+# ClassBox
 
 A new Flutter project.
 
