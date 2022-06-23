@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../../constants.dart';
 import '../../database/firebase_auth_handler.dart';
 import '../../database/firestore_requests_handler.dart';
+import '../../models/subject_model.dart';
 import '../../models/users/student_model.dart';
 import '../../models/users/teacher_model.dart';
 import '../../widgets_from_lib/drop_down.dart';
@@ -32,11 +33,18 @@ class FirstAuthPageState extends State<FirstAuthPage> {
 
   int roleIndex = 0;
 
+  String selectedSchoolId = 'none';
+
   bool isSchoolRegistered = true;
   bool isSchoolSelected = false;
 
   late List<SelectedListItem> _schools;
-  List<SchoolModel> _schoolsModels = [];
+  late List<SelectedListItem> _subjects;
+  SchoolModel selectedSchool =
+      SchoolModel(name: 'name', token: 'token', id: 'id', peoples: ['peoples']);
+
+  List<SchoolModel> schoolsModels = [];
+  List<SubjectModel> subjectsModels = [];
 
   final List<SelectedListItem> _listOfGroups = [
     SelectedListItem(false, 'P-10'),
@@ -51,17 +59,6 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     SelectedListItem(false, 'A-32'),
     SelectedListItem(false, 'P-41'),
     SelectedListItem(false, 'P-42'),
-  ];
-
-  final List<SelectedListItem> _listOfSubjects = [
-    SelectedListItem(false, 'Хімія'),
-    SelectedListItem(false, 'Фізика'),
-    SelectedListItem(false, 'Математика'),
-    SelectedListItem(false, 'Фізкультура'),
-    SelectedListItem(false, 'Бази даних'),
-    SelectedListItem(false, 'Операційні системи'),
-    SelectedListItem(false, 'ООП'),
-    SelectedListItem(false, 'Мобільна розробка'),
   ];
 
   @override
@@ -87,7 +84,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
 
     for (int value = 0; value < dbData.length; value++) {
       tempSchools.add(SelectedListItem(false, dbData[value]['name']));
-      _schoolsModels.add(SchoolModel(
+      schoolsModels.add(SchoolModel(
         name: dbData[value]['name'],
         token: dbData[value]['token'].toString(),
         id: dbData[value]['id'],
@@ -98,24 +95,48 @@ class FirstAuthPageState extends State<FirstAuthPage> {
     _schools = tempSchools;
   }
 
+  void fetchSchoolSubject(Map<int, dynamic> dbData) {
+    List<SelectedListItem> tempSubjects = [];
+
+    for (int value = 0; value < dbData.length; value++) {
+      tempSubjects.add(SelectedListItem(false, dbData[value]['name']));
+      subjectsModels.add(SubjectModel(
+        name: dbData[value]['name'],
+        id: dbData[value]['id'],
+      ));
+    }
+
+    _subjects = tempSubjects;
+  }
+
   Future<void> sendDirectorRequest(DirectorModel director) async {
     final userUid = FirebaseAuthHandler().getCurrentUser()!.uid.toString();
 
-    final findedSchool = _schoolsModels.firstWhere(
-        (element) => element.name == _schoolController.text, orElse: () {
-      return SchoolModel(
-          id: 'id', name: 'name', token: 'token', peoples: ['peoples']);
-    });
-
     FirestoreSchoolHandler()
-        .addSchoolPeople('Director', 'waiting', userUid, findedSchool.token);
+        .addSchoolPeople('Director', 'waiting', userUid, selectedSchool.token);
 
     FirestoreRequestsHandler().sendDirectorSchoolRequest(
         userUid,
         '${director.surname} ${director.firstName} ${director.middleName}',
-        findedSchool.id,
-        findedSchool.name,
-        'waiting');
+        selectedSchool.id,
+        selectedSchool.name,
+        'waiting',
+        'none');
+  }
+
+  Future<void> sendTeacherRequest(TeacherModel teacher) async {
+    final userUid = FirebaseAuthHandler().getCurrentUser()!.uid.toString();
+
+    FirestoreSchoolHandler()
+        .addSchoolPeople('Teacher', 'waiting', userUid, selectedSchool.token);
+
+    FirestoreRequestsHandler().sendTeacherSchoolRequest(
+        userUid,
+        '${teacher.surname} ${teacher.firstName}',
+        selectedSchool.id,
+        selectedSchool.name,
+        'waiting',
+        'Subject: ${teacher.subject}');
   }
 
   void addDatabaseUser() {
@@ -137,8 +158,9 @@ class FirstAuthPageState extends State<FirstAuthPage> {
             _schoolController.text,
             _subjectController.text);
         FirestoreUserHandler().addTeacher(teacher).whenComplete(() =>
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const SplashPage())));
+            sendTeacherRequest(teacher).whenComplete(() => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SplashPage()))));
         break;
       case 3: //Director
         DirectorModel director = DirectorModel(_firstNameController.text,
@@ -176,6 +198,15 @@ class FirstAuthPageState extends State<FirstAuthPage> {
         selectedItem: (String selected) {
           setState(() {
             _schoolController.text = selected;
+            selectedSchool = schoolsModels
+                .firstWhere((element) => element.name == _schoolController.text,
+                    orElse: () {
+              return SchoolModel(
+                  id: 'id',
+                  name: 'name',
+                  token: 'token',
+                  peoples: ['peoples']); //TODO: CHANGE PEOPLES
+            });
           });
         },
         enableMultipleSelection: false,
@@ -206,7 +237,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
       DropDown(
         submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
         searchHintText: 'Почніть набирати текст для пошуку предмета...',
-        dataList: _listOfSubjects,
+        dataList: _subjects,
         selectedItem: (String selected) {
           setState(() {
             _subjectController.text = selected;
@@ -357,37 +388,91 @@ class FirstAuthPageState extends State<FirstAuthPage> {
             }),
           ),
           SizedBox(height: kDefaultPadding),
-          Container(
-            //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
-            padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
-            decoration: BoxDecoration(
-              color: kFormFillColor,
-              border: Border.all(width: 1, color: Colors.transparent),
-              borderRadius: BorderRadius.circular(kDefaultRadius),
-            ),
-            child: TextField(
-              controller: _subjectController,
-              readOnly: true,
-              enabled: isSchoolSelected,
-              onTap: () {
-                FocusScope.of(context).unfocus();
-                openDropDownSubjects();
-              },
-              style: TextStyle(
-                fontSize: 14,
-                color: isSchoolSelected ? kBlueTextColor : kErrorColor,
-              ),
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: isSchoolSelected
-                    ? 'Натисніть для вибору вашого предмету'
-                    : 'Щоб продовжити виберіть навчальний заклад',
-                hintStyle: TextStyle(
-                    color: isSchoolSelected ? kBlueTextColor : kErrorColor),
-              ),
-            ),
-          )
+          StreamBuilder<QuerySnapshot>(
+            stream:
+                FirestoreSchoolHandler().getSchoolSubjects(selectedSchool.id),
+            builder:
+                ((BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text(
+                    "Error: Something went wrong"); //TODO: ERROR ICON
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+
+              if (snapshot.data!.docs.isEmpty) {
+                return Container(
+                  //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
+                  padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                  decoration: BoxDecoration(
+                    color: kFormFillColor,
+                    border: Border.all(width: 1, color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(kDefaultRadius),
+                  ),
+                  child: TextField(
+                    controller: _subjectController,
+                    readOnly: true,
+                    enabled: isSchoolSelected,
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      openDropDownSubjects();
+                    },
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isSchoolSelected ? kBlueTextColor : kErrorColor,
+                    ),
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: isSchoolSelected
+                          ? 'Натисніть для вибору вашого предмету'
+                          : 'Щоб продовжити виберіть навчальний заклад',
+                      hintStyle: TextStyle(
+                          color:
+                              isSchoolSelected ? kBlueTextColor : kErrorColor),
+                    ),
+                  ),
+                );
+              }
+
+              Map<int, dynamic> data = snapshot.data!.docs.asMap();
+
+              fetchSchoolSubject(data);
+              return Container(
+                //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
+                padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                decoration: BoxDecoration(
+                  color: kFormFillColor,
+                  border: Border.all(width: 1, color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(kDefaultRadius),
+                ),
+                child: TextField(
+                  controller: _subjectController,
+                  readOnly: true,
+                  enabled: isSchoolSelected,
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    openDropDownSubjects();
+                  },
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isSchoolSelected ? kBlueTextColor : kErrorColor,
+                  ),
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: isSchoolSelected
+                        ? 'Натисніть для вибору вашого предмету'
+                        : 'Щоб продовжити виберіть навчальний заклад',
+                    hintStyle: TextStyle(
+                        color: isSchoolSelected ? kBlueTextColor : kErrorColor),
+                  ),
+                ),
+              );
+            }),
+          ),
         ];
       case 3: //Director
         return [
