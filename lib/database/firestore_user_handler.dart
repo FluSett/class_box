@@ -38,8 +38,7 @@ class FirestoreUserHandler {
           'role': 'Teacher',
           'firstName': teacher.firstName,
           'surname': teacher.surname,
-          'school': teacher.school,
-          'subject': teacher.subject,
+          'school': [teacher.school],
           'email':
               FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
                   ? 'Social'
@@ -58,7 +57,7 @@ class FirestoreUserHandler {
           'role': 'student',
           'firstName': student.firstName,
           'surname': student.surname,
-          'school': student.school,
+          'school': [student.school],
           'group': student.group,
           'email':
               FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
