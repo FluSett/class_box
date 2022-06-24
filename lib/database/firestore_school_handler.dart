@@ -62,4 +62,8 @@ class FirestoreSchoolHandler {
   Stream<QuerySnapshot<Object?>> getSchoolSubjects(String schoolId) {
     return _schools.doc(schoolId).collection('subjects').snapshots();
   }
+
+  Stream<QuerySnapshot<Object?>> getSchoolGroups(String schoolId) {
+    return _schools.doc(schoolId).collection('groups').snapshots();
+  }
 }
