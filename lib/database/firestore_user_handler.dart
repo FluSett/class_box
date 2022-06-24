@@ -14,6 +14,7 @@ class FirestoreUserHandler {
     return _users
         .doc(userUid)
         .set({
+          'id': userUid,
           'role': 'Director',
           'firstName': director.firstName,
           'surname': director.surname,
@@ -33,6 +34,7 @@ class FirestoreUserHandler {
     return _users
         .doc(userUid)
         .set({
+          'id': userUid,
           'role': 'Teacher',
           'firstName': teacher.firstName,
           'surname': teacher.surname,
@@ -52,6 +54,7 @@ class FirestoreUserHandler {
     return _users
         .doc(userUid)
         .set({
+          'id': userUid,
           'role': 'student',
           'firstName': student.firstName,
           'surname': student.surname,
