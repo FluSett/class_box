@@ -38,6 +38,10 @@ class FirestoreUserHandler {
           'surname': teacher.surname,
           'school': teacher.school,
           'subject': teacher.subject,
+          'email':
+              FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
+                  ? 'Social'
+                  : FirebaseAuthHandler().getCurrentUser()!.email.toString(),
         })
         .then((value) => print('Teacher added'))
         .catchError((error) => print("Failed add teacher: $error"));
@@ -53,6 +57,10 @@ class FirestoreUserHandler {
           'surname': student.surname,
           'school': student.school,
           'group': student.group,
+          'email':
+              FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
+                  ? 'Social'
+                  : FirebaseAuthHandler().getCurrentUser()!.email.toString(),
         })
         .then((value) => print('Student added'))
         .catchError((error) => print("Failed add student: $error"));

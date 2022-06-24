@@ -39,4 +39,22 @@ class FirestoreRequestsHandler {
       'message': message
     });
   }
+
+  Future<void> sendStudentSchoolRequest(
+    String uid,
+    String pib,
+    String schoolId,
+    String schoolName,
+    String status,
+    String message,
+  ) async {
+    _requests.doc(uid).set({
+      'uid': uid,
+      'pib': pib, //TODO: REWORK TO DYNAMIC DATA BY UID
+      'schoolId': schoolId, //TODO: REWORK TO DYNAMIC DATA BY UID
+      'schoolName': schoolName,
+      'status': status,
+      'message': message
+    });
+  }
 }
