@@ -17,6 +17,17 @@ class KNavigationBar extends StatefulWidget {
 }
 
 class KNavigationBarState extends State<KNavigationBar> {
+  String a = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      a = widget.role;
+    });
+  }
+
   var currentIndex = 0;
 
   Widget navigationButton(int index) {
@@ -88,12 +99,12 @@ class KNavigationBarState extends State<KNavigationBar> {
     );
   }
 
-  List<Widget> listOfPages = [
+  late List<Widget> listOfPages = [
     const HomePage(),
     const TasksPage(),
     const SearchFilesPage(),
     const RequestsPage(),
-    const ProfilePage(),
+    ProfilePage(role: widget.role),
   ];
 
   List<IconData> listOfIcons = [
