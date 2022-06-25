@@ -3,7 +3,7 @@ description: ClassBox for Study.
 
 publish_to: 'none'
 
-version: 0.5.1+1
+version: 0.5.7+1
 
 environment:
   sdk: ">=2.17.1 <3.0.0"
