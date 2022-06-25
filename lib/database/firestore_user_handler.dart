@@ -19,7 +19,7 @@ class FirestoreUserHandler {
           'firstName': director.firstName,
           'surname': director.surname,
           'middleName': director.middleName,
-          'schools': [school],
+          'school': school,
           'email':
               FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
                   ? 'Social'
@@ -38,7 +38,8 @@ class FirestoreUserHandler {
           'role': 'Teacher',
           'firstName': teacher.firstName,
           'surname': teacher.surname,
-          'school': [teacher.school],
+          'school': teacher.school,
+          'subjects': ['none'],
           'email':
               FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
                   ? 'Social'
@@ -57,7 +58,7 @@ class FirestoreUserHandler {
           'role': 'student',
           'firstName': student.firstName,
           'surname': student.surname,
-          'school': [student.school],
+          'school': student.school,
           'group': student.group,
           'email':
               FirebaseAuthHandler().getCurrentUser()!.email.toString() == null
@@ -91,5 +92,9 @@ class FirestoreUserHandler {
     } catch (e) {
       return 'none';
     }
+  }
+
+  Stream<DocumentSnapshot<Object?>> getDirectorData(String uid) {
+    return _users.doc(uid).snapshots();
   }
 }

@@ -30,7 +30,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
   final _newSchoolController = TextEditingController();
   final _schoolController = TextEditingController();
   final _groupController = TextEditingController();
-  final _subjectController = TextEditingController();
+  final _messageController = TextEditingController();
 
   int roleIndex = 0;
 
@@ -140,7 +140,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
         selectedSchool.id,
         selectedSchool.name,
         'waiting',
-        'Subject: ${teacher.subject}');
+        '${teacher.message}');
   }
 
   Future<void> sendStudentRequest(StudentModel student) async {
@@ -176,7 +176,7 @@ class FirstAuthPageState extends State<FirstAuthPage> {
             _firstNameController.text,
             _surnameController.text,
             _schoolController.text,
-            _subjectController.text);
+            _messageController.text);
         FirestoreUserHandler().addTeacher(teacher).whenComplete(() =>
             sendTeacherRequest(teacher).whenComplete(() => Navigator.push(
                 context,
@@ -248,23 +248,6 @@ class FirstAuthPageState extends State<FirstAuthPage> {
         },
         enableMultipleSelection: false,
         searchController: _groupController,
-      ),
-    ).showModal(context);
-  }
-
-  void openDropDownSubjects() {
-    DropDownState(
-      DropDown(
-        submitButtonColor: const Color.fromRGBO(70, 76, 222, 1),
-        searchHintText: 'Почніть набирати текст для пошуку предмета...',
-        dataList: _subjects,
-        selectedItem: (String selected) {
-          setState(() {
-            _subjectController.text = selected;
-          });
-        },
-        enableMultipleSelection: false,
-        searchController: _subjectController,
       ),
     ).showModal(context);
   }
@@ -462,90 +445,30 @@ class FirstAuthPageState extends State<FirstAuthPage> {
             }),
           ),
           SizedBox(height: kDefaultPadding),
-          StreamBuilder<QuerySnapshot>(
-            stream:
-                FirestoreSchoolHandler().getSchoolSubjects(selectedSchool.id),
-            builder:
-                ((BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) {
-                return const Text(
-                    "Error: Something went wrong"); //TODO: ERROR ICON
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-
-              if (snapshot.data!.docs.isEmpty) {
-                return Container(
-                  //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
-                  padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
-                  decoration: BoxDecoration(
-                    color: kFormFillColor,
-                    border: Border.all(width: 1, color: Colors.transparent),
-                    borderRadius: BorderRadius.circular(kDefaultRadius),
-                  ),
-                  child: TextField(
-                    controller: _subjectController,
-                    readOnly: true,
-                    enabled: isSchoolSelected,
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
-                      openDropDownSubjects();
-                    },
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: isSchoolSelected ? kBlueTextColor : kErrorColor,
-                    ),
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: isSchoolSelected
-                          ? 'Натисніть для вибору вашого предмету'
-                          : 'Щоб продовжити виберіть навчальний заклад',
-                      hintStyle: TextStyle(
-                          color:
-                              isSchoolSelected ? kBlueTextColor : kErrorColor),
-                    ),
-                  ),
-                );
-              }
-
-              Map<int, dynamic> data = snapshot.data!.docs.asMap();
-
-              fetchSchoolSubject(data);
-              return Container(
-                //TODO: CHANGE TEXTFIELD -> TEXTBUTTON
-                padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
-                decoration: BoxDecoration(
-                  color: kFormFillColor,
-                  border: Border.all(width: 1, color: Colors.transparent),
-                  borderRadius: BorderRadius.circular(kDefaultRadius),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+            decoration: BoxDecoration(
+              color: kFormFillColor,
+              border: Border.all(width: 1, color: Colors.transparent),
+              borderRadius: BorderRadius.circular(kDefaultRadius),
+            ),
+            child: TextField(
+              controller: _messageController,
+              style: const TextStyle(
+                fontSize: 14,
+                color: kBlueTextColor,
+              ),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Повідомлення для запиту',
+                hintStyle: TextStyle(color: kBlueTextColor),
+                icon: Icon(
+                  Icons.message,
+                  size: 18,
+                  color: kBlueTextColor,
                 ),
-                child: TextField(
-                  controller: _subjectController,
-                  readOnly: true,
-                  enabled: isSchoolSelected,
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    openDropDownSubjects();
-                  },
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isSchoolSelected ? kBlueTextColor : kErrorColor,
-                  ),
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: isSchoolSelected
-                        ? 'Натисніть для вибору вашого предмету'
-                        : 'Щоб продовжити виберіть навчальний заклад',
-                    hintStyle: TextStyle(
-                        color: isSchoolSelected ? kBlueTextColor : kErrorColor),
-                  ),
-                ),
-              );
-            }),
+              ),
+            ),
           ),
         ];
       case 3: //Director
